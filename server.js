@@ -27,11 +27,13 @@ function errorHandling(err, req, res, next) {
 
 app.use(errorHandling);
 
+const port = connection.port;
+app.listen(port, () => {
+    console.log('Server is open!');
+});
+
 mongoose.connection.once('open', () => {
-    const port = connection.port;
-    app.listen(port, () => {
-        console.log('Server is open!');
-    });
+    console.log('Connection is open!');
 }).on('error', (error) => {
     console.warn('Connection failed!', error);
 });
