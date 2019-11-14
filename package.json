@@ -1,0 +1,29 @@
+{
+  "name": "nodejs-steamreview",
+  "version": "1.0.0",
+  "description": "2136993 - Robin Jan Harm Egberts - Back-end SteamReview",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Playwarrior/NodeJS-SteamReview.git"
+  },
+  "author": "Robin Egberts",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Playwarrior/NodeJS-SteamReview/issues"
+  },
+  "homepage": "https://github.com/Playwarrior/NodeJS-SteamReview#readme",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "jwt-simple": "^0.5.6",
+    "mocha": "^6.2.2",
+    "moment": "^2.24.0",
+    "mongoose": "^5.7.10",
+    "nodemon": "^1.19.4"
+  }
+}
