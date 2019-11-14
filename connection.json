@@ -1,5 +1,5 @@
 {
-  "connection": "mongodb+srv://steamreview-01:6BDvGtNU2VN9ZQGl@database-avans-dmqvw.mongodb.net/test?retryWrites=true&w=majority",
+  "connection": "mongodb+srv://steamreview-01:6BDvGtNU2VN9ZQGl@database-avans-dmqvw.mongodb.net/test?retryWrites=true&w=majority&socketTimeoutMS=360000&connectTimeoutMS=360000",
   "port": 4200,
   "key": "EC2NmRR0p2O0FMeB"
 }
