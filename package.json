@@ -4,7 +4,8 @@
   "description": "2136993 - Robin Jan Harm Egberts - Back-end SteamReview",
   "main": "app.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "start": "nodemon app.js"
   },
   "repository": {
     "type": "git",
