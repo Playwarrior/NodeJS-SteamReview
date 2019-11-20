@@ -2,7 +2,6 @@ const jwt = require('../helpers/jwt');
 const encrypt = require('../helpers/encrypt.js');
 
 const User = require('../models/user');
-const $User = require('../validators/uservalidator');
 
 const assert = require('assert');
 
@@ -25,7 +24,7 @@ router.post('/login', (req, res, next) => {
                 next(new Error('Incorrect password!'));
 
             else {
-                const token = jwt.encodeToken(user.email);
+                const token = jwt.encodeToken(user._id);
 
                 res.status(200).json({
                     token: token,
@@ -45,16 +44,16 @@ router.post('/register', (req, res, next) => {
     const body = req.body;
 
     try {
-        assert(body.email !== undefined && $User.validateEmail(body.email), "Email not found");
-        assert(body.password !== undefined && $User.validatePassword(body.password), "Password not found");
-        assert(body.steam !== undefined && $User.validateSteamId(body.steam), "SteamId not found");
+        assert(body.email !== undefined, "Email not found");
+        assert(body.password !== undefined, "Password not found");
+        assert(body.steam !== undefined, "SteamId not found");
 
         let user = new User({email: body.email, password: encrypt.encryptPassword(body.password), steam: body.steam});
 
         user.save().then(() => {
             res.status(200).json("created user!");
         }).catch((error) => {
-            next(error); //TODO: RETURN A GOOD ERROR CODE!
+            next(error);
         });
     } catch (ex) {
         next(ex);

@@ -12,7 +12,7 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-const Connection = process.env.MONGODB_URI || connection.connection
+const Connection = connection.connection;
 
 mongoose.connect(Connection, {
     useNewUrlParser: true,
@@ -29,13 +29,11 @@ function errorHandling(err, req, res, next) {
 
 app.use(errorHandling);
 
-const port = process.env.PORT || connection.port;
-app.listen(port, () => {
-    console.log('Server is open!');
-});
-
 mongoose.connection.once('open', () => {
-    console.log('Connection is open!');
+    const port = process.env.PORT || connection.port;
+    app.listen(port, () => {
+        console.log('Server is open!');
+    });
 }).on('error', (error) => {
     console.warn('Connection failed!', error);
 });

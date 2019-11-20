@@ -6,7 +6,7 @@ const connection = require('../connection');
 function encodeToken(username) {
     const payload = {
         exp: moment()
-            .add(1, "minutes")
+            .add(1, "days")
             .unix(),
         iat: moment().unix(),
         sub: username

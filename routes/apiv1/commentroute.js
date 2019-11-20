@@ -1,63 +1,118 @@
 const express = require('express');
 const router = express.Router();
-const assert = require('assert');
-
-const Comment = require('../../models/comment');
-
-//TODO: WHEN REWRITING A COMMENT ONLY LET THE AUTHOR REWRITE IT!
+const NullSector = require('../../util/nullsector');
 
 router.get('/:id', (req, res, next) => {
-    try {
-        assert(req.params.id.length === 19, "Invalid Id");
-
-        Comment.findOne({_id: req.params.id}).then((comment) => {
-            if (comment === null || comment === undefined)
-                next(new Error('No comment found!'));
-
-            else
-                res.status(200).json(comment);
-
-        }).catch((error) => {
+    NullSector.hasComment({_id: req.params.id}, (error, bool, comment) => {
+        if (error)
             next(error);
-        });
-    } catch (ex) {
-        next(ex);
-    }
+
+        else if (!bool)
+            res.status(204);
+
+        else {
+            res.status(200).json(comment);
+        }
+    });
 });
 
 router.put('/:id', (req, res, next) => {
-    try {
-        assert(req.params.id.length === 19, "Invalid Id");
-        assert(typeof req.body.content == "string", "Invalid content!");
-
-        Comment.findByIdAndUpdate(req.params.id, {
-            content: req.body.content,
-            edited: true
-        }).then(() => {
-            res.status(200).json("Comment updated!");
-        }).catch((error) => {
+    NullSector.hasComment({_id: req.params.id, user: res.get('id')}, (error, bool, comment) => {
+        if (error)
             next(error);
-        })
-    } catch (ex) {
-        next(ex);
-    }
+
+        else if (!bool)
+            res.status(204);
+
+        else {
+            comment.update({
+                content: req.params.content,
+                edited: true
+            }).then(() => {
+                res.status(200).json('Comment updated!');
+            }).catch((error) => {
+                next(error);
+            });
+        }
+    });
 });
 
 router.delete('/:id', (req, res, next) => {
-   try {
-       assert(req.params.id.length === 19, "Invalid Id");
+    NullSector.hasComment({_id: req.params.id, user: res.get('id')}, (error, bool, comment) => {
+        if (error)
+            next(error);
 
-       Comment.findByIdAndRemove(req.params.id).then(() => {
-            res.status(200).json("Comment deleted!");
-       }).catch((error) => {
-           next(error);
-       });
+        else if (!bool)
+            res.status(204);
 
-   } catch(ex){
-       next(ex);
-   }
+        else {
+            comment.remove().then(() => {
+                res.status(200).json('comment deleted!');
+            });
+        }
+    });
 });
 
-//TODO ADD UPVOTE & DOWNVOTE ROUTE
+router.put('/:id/upvote', (req, res, next) => {
+    NullSector.hasComment({_id: req.params.id}, (error, bool, comment) => {
+        if (error)
+            next(error);
+
+        else if (!bool)
+            res.status(204);
+
+        else {
+            let upVotes = comment.votes.upVotes;
+            let downVotes = comment.votes.downVotes;
+
+            if (!upVotes.includes(res.get('id'))) {
+                upVotes.push(res.get('id'));
+                downVotes.remove(res.get('id'));
+            }
+
+            comment.update({
+                votes: {
+                    upVotes: upVotes,
+                    downVotes: downVotes
+                }
+            }).then(() => {
+                res.status(200).json('Upvoted comment!');
+            }).catch((error) => {
+                next(error);
+            });
+        }
+    });
+});
+
+router.put('/:id/downvote', (req, res, next) => {
+    NullSector.hasComment({_id: req.params.id}, (error, bool, comment) => {
+        if (error)
+            next(error);
+
+        else if (!bool)
+            res.status(204);
+
+        else {
+            let upVotes = comment.votes.upVotes;
+            let downVotes = comment.votes.downVotes;
+
+            if (!downVotes.includes(res.get('id'))) {
+                downVotes.push(res.get('id'));
+                upVotes.remove(res.get('id'));
+            }
+
+            comment.update({
+                votes: {
+                    upVotes: upVotes,
+                    downVotes: downVotes
+                }
+            }).then(() => {
+                res.status(200).json('Downvoted comment!');
+            }).catch((error) => {
+                next(error);
+            });
+        }
+    });
+});
 
 module.exports = router;

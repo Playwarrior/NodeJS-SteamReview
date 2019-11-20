@@ -1,154 +1,169 @@
 const express = require('express');
 const router = express.Router();
-const assert = require('assert');
 
-const User = require("../../models/user");
 const Review = require('../../models/review');
 const Comment = require('../../models/comment');
-
-//TODO: WHEN REWRITING A REVIEW ONLY LET THE AUTHOR EDIT THE REVIEW/COMMENT
+const NullSector = require("../../util/nullsector");
 
 //creation of a new review
 router.post('', (req, res, next) => {
     const body = req.body;
 
-    try {
-        assert(typeof body.content == "string", "Invalid content!");
-        assert(typeof body.title == "string", "Invalid title!");
-        assert(typeof body.appId == "number", "Invalid app-id");
+    const review = new Review({
+        userId: res.get('id'),
+        title: body.title,
+        content: body.content
+    });
 
-        User.findOne({email: res.get('email')}, {_id: 1}).then((user) => {
-            return new Review({
-                user: user._id,
-                postDate: Date.now(),
-                content: body.content,
-                appId: body.appId,
-                edited: false,
-                title: body.title,
-                votes: {
-                    upVotes: [],
-                    downVotes: []
-                }
-            });
-        }).then((review) => review.save()).then(() => {
-            res.status(200).json('Created Review');
-        }).catch((error) => {
-            next(error);
-        });
-    } catch (ex) {
-        next(ex);
-    }
-});
-
-//gets all reviews
-router.get('', (req, res, next) => {
-    Review.find().then((reviews) => {
-        res.status(200).json(reviews);
+    review.save().then(() => {
+        res.status(200).json('Review created!');
     }).catch((error) => {
         next(error);
     });
 });
 
-//gets review with certain id
-router.get('/:id', (req, res, next) => {
-    try {
-        assert(req.params.id.length === 19, 'Invalid Id');
-
-        Review.findOne({_id: req.params.id}).then((review) => {
-            if (review === null || review === undefined)
-                next(new Error('Invalid Id'));
-
-            else
-                res.status(200).json(review);
-        }).catch((error) => {
+router.post('/:id/comment', (req, res, next) => {
+    NullSector.hasReview({_id: req.params.id}, (error, bool, review) => {
+        if (error)
             next(error);
-        })
-    } catch (ex) {
-        next(ex);
-    }
+
+        else if (!bool)
+            res.status(204);
+
+        else {
+            const comment = new Comment({
+                review: review._id,
+                user: res.get('id'),
+                content: req.body.content
+            });
+
+            comment.save().then(() => {
+                res.status(200).json('Comment created!');
+            }).catch((error) => {
+                next(error);
+            })
+        }
+    });
 });
+
+//gets all reviews
+router.get('/:appid', (req, res, next) => {
+    Review.find({appId: req.params.appid}).then((reviews) => {
+        if (reviews.length === 0)
+            res.status(204);
+
+        else
+            res.status(200).json(reviews);
+
+    }).catch((error) => {
+        next(error);
+    })
+});
+
 
 //update a review
 router.put('/:id', (req, res, next) => {
-    const body = req.body;
-
-    try {
-        assert(req.params.id.length === 19, 'Invalid Id');
-        assert(typeof body.title == "string", "Invalid Title");
-        assert(typeof body.content == "string", "Invalid Content");
-
-        Review.findByIdAndUpdate(req.params.id, {
-            edited: true,
-            title: body.title,
-            content: body.content
-        }).then(() => {
-            res.status(200).json('Updated Review : ' + req.params.id);
-        }).catch((error) => {
+    NullSector.hasReview({_id: req.params.id, user: res.get('id')}, (error, bool, review) => {
+        if (error)
             next(error);
-        });
-    } catch (ex) {
-        next(ex);
-    }
+
+        else if (!bool)
+            res.status(204);
+
+        else {
+            review.update({
+                title: req.body.title,
+                content: req.body.content,
+                edited: true
+            }).then(() => {
+                res.status(200).json('Review updated!');
+            }).catch((error) => {
+                next(error);
+            });
+        }
+    });
+});
+
+router.put('/:id/upvote', (req, res, next) => {
+    NullSector.hasReview({_id: req.params.id}, (error, bool, review) => {
+        if (error)
+            next(error);
+
+        else if (!bool)
+            res.status(204);
+
+        else {
+            let upVotes = review.votes.upVotes;
+            let downVotes = review.votes.downVotes;
+
+            if (!upVotes.includes(res.get('id'))) {
+                upVotes.push(res.get('id'));
+                downVotes.remove(res.get('id'));
+            }
+
+            review.update({
+                votes: {
+                    upVotes: upVotes,
+                    downVotes: downVotes
+                }
+            }).then(() => {
+                res.status(200).json('Upvoted review!');
+            }).catch((error) => {
+                next(error);
+            });
+        }
+    });
+});
+
+router.put('/:id/downvote', (req, res, next) => {
+    NullSector.hasReview({_id: req.params.id}, (error, bool, review) => {
+        if (error)
+            next(error);
+
+        else if (!bool)
+            res.status(204);
+
+        else {
+            let upVotes = review.votes.upVotes;
+            let downVotes = review.votes.downVotes;
+
+            if (!downVotes.includes(res.get('id'))) {
+                downVotes.push(res.get('id'));
+                upVotes.remove(res.get('id'));
+            }
+
+            review.update({
+                votes: {
+                    upVotes: upVotes,
+                    downVotes: downVotes
+                }
+            }).then(() => {
+                res.status(200).json('Downvoted review!');
+            }).catch((error) => {
+                next(error);
+            });
+        }
+    });
 });
 
 //delete a review
 router.delete('/:id', (req, res, next) => {
-    try {
-        assert(req.params.id.length === 19, 'Invalid Id');
-
-        Review.findByIdAndRemove(req.params.id).then(() => {
-            res.status(200).json('Review deleted!');
-        }).catch((error) => {
+    NullSector.hasReview({_id: req.params.id, user: res.get('id')}, (error, bool, review) => {
+        if (error)
             next(error);
-        })
-    } catch (ex) {
-        next(ex);
-    }
-});
 
-//comment on a thread
-router.post('/:id/comments', (req, res, next) => {
-    const body = req.body;
+        else if (!bool)
+            res.status(204);
 
-    try {
-        assert(typeof body.content == "string", "Invalid content!");
-        assert(req.params.id.length === 19, "Invalid Id");
-
-        User.findOne({email: res.get('email')}, {_id: 1}).then((user) => {
-            return new Comment({
-                user: user._id,
-                postDate: Date.now(),
-                content: body.content,
-                edited: false,
-                review: req.params.id,
-                votes: {
-                    topVotes: [],
-                    downVotes: []
-                }
-            });
-        }).then((comment) => comment.save()).then(() => {
-            res.status(200).json('comment created!')
-        }).catch((error) => {
-            next(error)
-        });
-    } catch (ex) {
-        next(ex);
-    }
-});
-
-//get comments from a thread
-router.get('/:id/comments', (req, res, next) => {
-    try {
-        assert(req.params.id.length === 19, "Invalid Id");
-
-        Comment.find({review: req.params.id}).then((comments) => {
-            res.status(200).json(comments);
-        }).catch((error) => {
-            next(error);
-        });
-    } catch (ex) {
-        next(ex);
-    }
+        else {
+            Promise.all([review.remove(), Comment.deleteMany({review: req.params.id})])
+                .then(() => {
+                    res.status(200).json('Review deleted!');
+                }).catch((error) => {
+                next(error);
+            })
+        }
+    });
 });
 
 module.exports = router;
