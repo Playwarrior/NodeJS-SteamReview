@@ -12,28 +12,36 @@ const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-const Connection = connection.connection;
-
-mongoose.connect(Connection, {
+mongoose.connect(connection.connection, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: false
+    useFindAndModify: false,
+    useCreateIndex: true
 });
 
-app.use('/auth', auth);
-app.use('/apiv1', apiv1);
-
-function errorHandling(err, req, res, next) {
-    res.status(500).json(err.message);
-}
-
-app.use(errorHandling);
-
 mongoose.connection.once('open', () => {
-    const port = process.env.PORT || connection.port;
+    console.log('Connection is open!');
+
+    const port = process.env.PORT || 8080;
     app.listen(port, () => {
         console.log('Server is open!');
     });
 }).on('error', (error) => {
     console.warn('Connection failed!', error);
 });
+
+app.all('*', (req, res, next) => {
+    next();
+});
+
+app.use('/apiv1', apiv1);
+app.use('/auth', auth);
+
+function errorHandling(err, req, res, next) {
+    res.status(500).json(err.message);
+    console.log(err);
+}
+
+app.use(errorHandling);
+
+module.exports = app;

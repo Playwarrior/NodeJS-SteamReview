@@ -2,7 +2,7 @@
   "name": "nodejs-steamreview",
   "version": "1.0.0",
   "description": "2136993 - Robin Jan Harm Egberts - Back-end SteamReview",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
     "test": "mocha"
   },
