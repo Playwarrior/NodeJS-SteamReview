@@ -15,7 +15,7 @@ const ReviewSchema = new Schema({
         type: String,
         validate: {
             validator: function(v) {
-                return /^.{1,100}$/.test(v);
+                return /^.{1,300}$/.test(v);
             },
             msg: 'Title is empty or exceeds 100 characters!'
         },
