@@ -48,13 +48,10 @@ router.post('/:id/comment', (req, res, next) => {
 
 //gets all reviews
 router.get('/:appid', (req, res, next) => {
+    console.log(req.params.appid)
+
     Review.find({appId: req.params.appid}).then((reviews) => {
-        if (reviews.length === 0)
-            res.status(204);
-
-        else
-            res.status(200).json(reviews);
-
+        res.status(200).json(reviews);
     }).catch((error) => {
         next(error);
     })

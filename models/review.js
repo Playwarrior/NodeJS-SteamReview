@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-//TODO ADD VALIDATION!
 const ReviewSchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
