@@ -56,7 +56,7 @@ router.get('/games/:id', (req, res, next) => {
                 next(error);
 
             else {
-                res.status(200).json(JSON.parse(body).response.games.filter(game => game.appid == req.params.id));
+                res.status(200).json(JSON.parse(body).response.games.filter(game => game.appid == req.params.id)[0]);
             }
         });
 
