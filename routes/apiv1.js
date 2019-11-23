@@ -21,7 +21,7 @@ router.put('*', validateToken);
 router.delete('*', validateToken);
 
 function validateToken(req, res, next) {
-    const token = req.params.token || "";
+    const token = req.query.token || "";
 
     jwt.decodeToken(token, (error, payload) => {
         if (error) {
