@@ -42,6 +42,7 @@ router.get('/games', (req, res, next) => {
                 next(error);
 
             else {
+                res.remove('id');
                 res.status(200).json(body);
             }
         });
