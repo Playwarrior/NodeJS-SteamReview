@@ -12,8 +12,15 @@ const reviewRoute = require('./apiv1/reviewroute');
 const userRoute = require('./apiv1/userroute');
 
 /*   Validation JWT-Token   */
-router.all('*', (req, res, next) => {
+router.get('*', validateToken);
 
+router.post('*', validateToken);
+
+router.put('*', validateToken);
+
+router.delete('*', validateToken);
+
+function validateToken(req, res, next) {
     assert(typeof req.headers["token"] == "string", "No valid token!");
 
     const token = req.header("token") || "";
@@ -26,7 +33,8 @@ router.all('*', (req, res, next) => {
             next();
         }
     });
-});
+}
+
 
 //addition of routes
 router.use('/reviews', reviewRoute);
