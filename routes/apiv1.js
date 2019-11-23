@@ -21,9 +21,7 @@ router.put('*', validateToken);
 router.delete('*', validateToken);
 
 function validateToken(req, res, next) {
-    assert(typeof req.headers["token"] == "string", "No valid token!");
-
-    const token = req.header("token") || "";
+    const token = req.params.token || "";
 
     jwt.decodeToken(token, (error, payload) => {
         if (error) {
