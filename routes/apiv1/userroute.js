@@ -48,7 +48,7 @@ router.get('/games', (req, res, next) => {
 
                 console.log(name);
 
-                if (name)
+                if (name && games)
                     games = games.filter(game => {
                         console.log(typeof name);
                         var l = game.name.toLowerCase().startsWith(name.toLowerCase());
