@@ -36,13 +36,27 @@ router.get('/comments', (req, res, next) => {
 });
 
 router.get('/games', (req, res, next) => {
+    const name = req.query.name;
+
     User.findOne({_id: res.get('id')}).then(user => {
         request.get(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=D640AA92C21657F4319FE96D5A269F4D&include_appinfo=true&include_played_free_games=true&format=json&steamid=${user.steam}`, {}, (error, response, body) => {
             if (error)
                 next(error);
 
             else {
-                res.status(200).json(JSON.parse(body).response.games);
+                let games = JSON.parse(body).response.games;
+
+                console.log(name);
+
+                if (name)
+                    games = games.filter(game => {
+                        console.log(typeof name);
+                        var l = game.name.toLowerCase().startsWith(name.toLowerCase());
+                        console.log(l);
+                        return l;
+                    });
+
+                res.status(200).json(games);
             }
         });
 
