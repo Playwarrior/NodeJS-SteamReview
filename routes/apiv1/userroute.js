@@ -39,7 +39,7 @@ router.get('/games', (req, res, next) => {
     const name = req.query.name;
 
     User.findOne({_id: res.get('id')}).then(user => {
-        request.get(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=D640AA92C21657F4319FE96D5A269F4D&include_appinfo=true&include_played_free_games=true&format=json&steamid=${user.steam}`, {}, (error, response, body) => {
+        request.get(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=895B4194E1AD13021E19E236A6D8CC7E&include_appinfo=true&include_played_free_games=true&format=json&steamid=${user.steam}`, {}, (error, response, body) => {
             if (error)
                 next(error);
 
@@ -67,7 +67,7 @@ router.get('/games', (req, res, next) => {
 
 router.get('/games/:id', (req, res, next) => {
     User.findOne({_id: res.get('id')}).then(user => {
-        request.get(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=D640AA92C21657F4319FE96D5A269F4D&include_appinfo=true&include_played_free_games=true&format=json&steamid=${user.steam}`, {}, (error, response, body) => {
+        request.get(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=895B4194E1AD13021E19E236A6D8CC7E&include_appinfo=true&include_played_free_games=true&format=json&steamid=${user.steam}`, {}, (error, response, body) => {
             if (error)
                 next(error);
 
