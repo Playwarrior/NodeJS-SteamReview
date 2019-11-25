@@ -46,6 +46,8 @@ router.get('/games', (req, res, next) => {
             else {
                 let games = JSON.parse(body).response.games;
 
+                console.log(games);
+
                 console.log(name);
 
                 if (name && games)
@@ -70,12 +72,12 @@ router.get('/games/:id', (req, res, next) => {
                 next(error);
 
             else {
-                const body = JSON.parse(body);
+                const b = JSON.parse(body);
 
                 res.status(200);
 
-                if (body.response.games)
-                    res.json(JSON.parse(body).response.games.filter(game => game.appid == req.params.id)[0])
+                if (b.response.games)
+                    res.json(b.response.games.filter(game => game.appid == req.params.id)[0]);
 
                 else
                     res.json({});
