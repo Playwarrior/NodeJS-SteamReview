@@ -70,10 +70,17 @@ router.get('/games/:id', (req, res, next) => {
                 next(error);
 
             else {
-                res.status(200).json(JSON.parse(body).response.games.filter(game => game.appid == req.params.id)[0]);
+                const body = JSON.parse(body);
+
+                res.status(200);
+
+                if (body.response.games)
+                    res.json(JSON.parse(body).response.games.filter(game => game.appid == req.params.id)[0])
+
+                else
+                    res.json({});
             }
         });
-
     });
 });
 
