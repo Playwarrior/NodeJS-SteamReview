@@ -13,7 +13,7 @@ router.post('', (req, res, next) => {
         userId: res.get('id'),
         title: body.title,
         content: body.content,
-        appId: body.appId
+        appId: body.appId.toString()
     });
 
     review.save().then(() => {
@@ -49,11 +49,11 @@ router.post('/:id/comment', (req, res, next) => {
 
 //gets all reviews
 router.get('/:appid', (req, res, next) => {
-    Review.find({appId: req.params.appid}, {user: 0}).then((reviews) => {
+    Review.find({appId: req.params.appid}).then((reviews) => {
         res.status(200).json(reviews);
     }).catch((error) => {
         next(error);
-    })
+    });
 });
 
 

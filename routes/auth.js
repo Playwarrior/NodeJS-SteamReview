@@ -27,6 +27,7 @@ router.post('/login', (req, res, next) => {
                 const token = jwt.encodeToken(user._id);
 
                 res.status(200).json({
+                    id: user._id,
                     token: token,
                     steam: user.steam
                 });
