@@ -48,14 +48,7 @@ router.get('/review/:id', (req, res, next) => {
             res.status(204);
 
         else {
-            Comment.find({review: review._id}).then((comments) => {
-                res.status(200).json({
-                    review: review,
-                    comments: comments
-                });
-            }).catch((error) => {
-                next(error);
-            });
+            res.status(200).json(review);
         }
     });
 });

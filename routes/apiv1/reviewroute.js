@@ -12,7 +12,8 @@ router.post('', (req, res, next) => {
     const review = new Review({
         userId: res.get('id'),
         title: body.title,
-        content: body.content
+        content: body.content,
+        appId: body.appId
     });
 
     review.save().then(() => {
