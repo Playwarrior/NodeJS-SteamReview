@@ -10,7 +10,7 @@ router.post('', (req, res, next) => {
     const body = req.body;
 
     const review = new Review({
-        userId: res.get('id'),
+        user: res.get('id'),
         title: body.title,
         content: body.content,
         appId: body.appId.toString()

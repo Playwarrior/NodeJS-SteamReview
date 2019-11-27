@@ -1,5 +1,7 @@
 const Review = require('../models/review');
 const Comment = require('../models/comment');
+const User = require('../models/user');
+
 
 function hasReview(searchCriteria, cb) {
     Review.findOne(searchCriteria).then((review) => {
@@ -17,7 +19,16 @@ function hasComment(searchCriteria, cb) {
     });
 }
 
+function hasUser(searchCriteria, cb) {
+    User.findOne(searchCriteria).then((user) => {
+        cb(null, user !== null, user);
+    }).catch((error) => {
+        cb(error, false, null);
+    });
+}
+
 module.exports = {
     hasReview,
-    hasComment
+    hasComment,
+    hasUser
 };

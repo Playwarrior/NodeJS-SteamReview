@@ -6,6 +6,7 @@ const connection = require('./connection');
 
 const auth = require('./routes/auth');
 const apiv1 = require('./routes/apiv1');
+const apiv2 = require('./routes/apiv2');
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.all('*', (req, res, next) => {
 });
 
 app.use('/apiv1', apiv1);
+app.use('/apiv2', apiv2);
 app.use('/auth', auth);
 
 function errorHandling(err, req, res, next) {
