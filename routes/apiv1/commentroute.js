@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const NullSector = require('../../util/nullsector');
 const {formatComments} = require("../../util/format");
+const Comment = require('../../models/comment');
 
 router.get('/:reviewId', (req, res, next) => {
     Comment.find({review: req.params.reviewId}).then((comments) => {
