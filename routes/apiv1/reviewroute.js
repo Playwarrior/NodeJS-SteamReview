@@ -4,6 +4,8 @@ const router = express.Router();
 const Review = require('../../models/review');
 const Comment = require('../../models/comment');
 const NullSector = require("../../util/nullsector");
+const {formatReviews} = require("../../util/format");
+const {formatReview} = require("../../util/format");
 
 //creation of a new review
 router.post('', (req, res, next) => {
@@ -50,7 +52,7 @@ router.post('/:id/comment', (req, res, next) => {
 //gets all reviews
 router.get('/:appid', (req, res, next) => {
     Review.find({appId: req.params.appid}).then((reviews) => {
-        res.status(200).json(reviews);
+        res.status(200).json(formatReviews(reviews, res.get('id')));
     }).catch((error) => {
         next(error);
     });
