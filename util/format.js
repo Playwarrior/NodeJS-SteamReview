@@ -41,7 +41,7 @@ function formatComment(comment, user) {
         user: comment.user,
         review: comment.review,
         content: comment.content,
-        postDate: comment.postData,
+        postDate: comment.postDate,
         edited: comment.edited,
         upVoteCount: upVoteCount,
         downVoteCount: downVoteCount,
