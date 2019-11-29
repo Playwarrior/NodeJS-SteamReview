@@ -30,4 +30,34 @@ function formatReviews(reviews, user){
     return array;
 }
 
-module.exports = {formatReview, formatReviews};
+function formatComment(comment, user) {
+    let upVoteCount = comment.votes.upVotes.length;
+    let downVoteCount = comment.votes.downVotes.length;
+    let isUpVoted = comment.votes.upVotes.includes(user);
+    let isDownVoted = comment.votes.downVotes.includes(user);
+
+    return {
+        _id: comment._id,
+        user: comment.user,
+        review: comment.review,
+        content: comment.content,
+        postDate: comment.postData,
+        edited: comment.edited,
+        upVoteCount: upVoteCount,
+        downVoteCount: downVoteCount,
+        isUpVoted: isUpVoted,
+        isDownVoted: isDownVoted
+    }
+}
+
+function formatComments(comments, user){
+    let array = [];
+
+    for(let comment of comments) {
+        array.push(formatComment(comment, user));
+    }
+
+    return array;
+}
+
+module.exports = {formatReview, formatReviews, formatComment, formatComments};

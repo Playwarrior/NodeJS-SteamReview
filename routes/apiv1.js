@@ -10,6 +10,8 @@ const router = express.Router();
 const commentRoute = require('./apiv1/commentroute');
 const reviewRoute = require('./apiv1/reviewroute');
 const userRoute = require('./apiv1/userroute');
+const {formatComment} = require("../util/format");
+const {formatReview} = require("../util/format");
 
 /*   Validation JWT-Token   */
 router.get('*', validateToken);
@@ -48,7 +50,21 @@ router.get('/review/:id', (req, res, next) => {
             res.status(204);
 
         else {
-            res.status(200).json(review);
+            res.status(200).json(formatReview(review));
+        }
+    });
+});
+
+router.get('/comment/:id', (req, res, next) => {
+    NullSector.hasComment({_id: req.params.id}, (error, bool, comment) => {
+        if (error)
+            next(error);
+
+        else if (!bool)
+            res.status(204);
+
+        else {
+            res.status(200).json(formatComment(comment));
         }
     });
 });

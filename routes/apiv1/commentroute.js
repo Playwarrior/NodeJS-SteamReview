@@ -1,19 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const NullSector = require('../../util/nullsector');
+const {formatComments} = require("../../util/format");
 
-router.get('/:id', (req, res, next) => {
-    NullSector.hasComment({_id: req.params.id}, (error, bool, comment) => {
-        if (error)
-            next(error);
-
-        else if (!bool)
-            res.status(204);
-
-        else {
-            res.status(200).json(comment);
-        }
-    });
+router.get('/:reviewId', (req, res, next) => {
+    Comment.find({review: req.params.reviewId}).then((comments) => {
+        res.status(200).json(formatComments(comments));
+    }).catch((error) => {
+        next(error);
+    })
 });
 
 router.put('/:id', (req, res, next) => {
