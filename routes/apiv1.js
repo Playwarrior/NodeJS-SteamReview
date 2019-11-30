@@ -50,7 +50,7 @@ router.get('/review/:id', (req, res, next) => {
             res.status(204);
 
         else {
-            res.status(200).json(formatReview(review));
+            res.status(200).json(formatReview(review, res.get('id')));
         }
     });
 });
@@ -64,7 +64,7 @@ router.get('/comment/:id', (req, res, next) => {
             res.status(204);
 
         else {
-            res.status(200).json(formatComment(comment));
+            res.status(200).json(formatComment(comment, res.get('id')));
         }
     });
 });
