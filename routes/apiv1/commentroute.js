@@ -6,7 +6,7 @@ const Comment = require('../../models/comment');
 
 router.get('/:reviewId', (req, res, next) => {
     Comment.find({review: req.params.reviewId}).then((comments) => {
-        res.status(200).json(formatComments(comments));
+        res.status(200).json(formatComments(comments, res.get('id')));
     }).catch((error) => {
         next(error);
     })
