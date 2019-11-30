@@ -4,6 +4,7 @@ const router = express.Router();
 const Review = require('../../models/review');
 const Comment = require('../../models/comment');
 const NullSector = require("../../util/nullsector");
+const {formatComment} = require("../../util/format");
 const {formatReviews} = require("../../util/format");
 const {formatReview} = require("../../util/format");
 
@@ -41,7 +42,7 @@ router.post('/:id/comment', (req, res, next) => {
             });
 
             comment.save().then((comment) => {
-                res.status(200).json(comment);
+                res.status(200).json(formatComment(comment, res.get('id')));
             }).catch((error) => {
                 next(error);
             })
