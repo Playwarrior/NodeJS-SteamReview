@@ -22,7 +22,7 @@ router.put('/:id', (req, res, next) => {
 
         else {
             comment.update({
-                content: req.params.content,
+                content: req.params.content.trim(),
                 edited: true
             }).then(() => {
                 res.status(200).json('Comment updated!');

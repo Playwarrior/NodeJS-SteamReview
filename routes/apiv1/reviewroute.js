@@ -14,8 +14,8 @@ router.post('', (req, res, next) => {
 
     const review = new Review({
         user: res.get('id'),
-        title: body.title,
-        content: body.content,
+        title: body.title.trim(),
+        content: body.content.trim(),
         appId: body.appId.toString()
     });
 
@@ -38,7 +38,7 @@ router.post('/:id/comment', (req, res, next) => {
             const comment = new Comment({
                 review: review._id,
                 user: res.get('id'),
-                content: req.body.content
+                content: req.body.content.trim()
             });
 
             comment.save().then((comment) => {
@@ -71,8 +71,8 @@ router.put('/:id', (req, res, next) => {
 
         else {
             review.update({
-                title: req.body.title,
-                content: req.body.content,
+                title: req.body.title.trim(),
+                content: req.body.content.trim(),
                 edited: true
             }).then(() => {
                 res.status(200).json('Review updated!');
