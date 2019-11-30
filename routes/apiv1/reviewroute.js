@@ -40,8 +40,8 @@ router.post('/:id/comment', (req, res, next) => {
                 content: req.body.content
             });
 
-            comment.save().then(() => {
-                res.status(200).json('Comment created!');
+            comment.save().then((comment) => {
+                res.status(200).json(comment);
             }).catch((error) => {
                 next(error);
             })

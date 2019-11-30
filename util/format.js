@@ -35,7 +35,7 @@ function formatComment(comment, user) {
     let downVoteCount = comment.votes.downVotes.length;
     let isUpVoted = comment.votes.upVotes.includes(user);
     let isDownVoted = comment.votes.downVotes.includes(user);
-    
+
     return {
         _id: comment._id,
         user: comment.user,
