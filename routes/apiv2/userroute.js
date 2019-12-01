@@ -2,8 +2,21 @@ const express = require('express');
 const request = require('request');
 
 const NullSector = require('../../util/nullsector');
+const Review = require('../../models/review');
+const {formatReviews} = require("../../util/format");
+const User = require('../../models/user');
 
 const router = express.Router();
+
+router.get('', (req, res, next) => {
+    const limit = req.query.limit || 16;
+
+    User.find({}, {id: 1, steam: 1}).limit(limit).then((users) => {
+        res.status(200).json(users);
+    }).catch((error) => {
+        next(error);
+    })
+});
 
 router.get('/profile/:id', (req, res, next) => {
     const id = req.params.id;
@@ -22,9 +35,32 @@ router.get('/profile/:id', (req, res, next) => {
 
                 let b = JSON.parse(body);
 
-                res.status(200).json(b.response.players[0]);
+                let player = b.response.players[0];
+                player.id = id;
+
+                res.status(200).json(player);
             });
         }
+    });
+});
+
+router.get('/:id/reviews', (req, res, next) => {
+    const id = req.params.id;
+
+    NullSector.hasUser({_id: id}, (error, bool, user) => {
+       if(error)
+           next(error);
+
+       else if(bool)
+           res.status(204);
+
+       else {
+           Review.find({user: id}).then((reviews) => {
+               res.status(200).json(formatReviews(reviews));
+           }).catch((error) => {
+               next(error);
+           })
+       }
     });
 });
 

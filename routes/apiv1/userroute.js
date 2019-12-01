@@ -5,19 +5,45 @@ const request = require('request');
 const Comment = require('../../models/comment');
 const Review = require('../../models/review');
 const User = require('../../models/user');
-const assert = require("assert");
+
+const NullSector = require("../../util/nullsector");
+const {formatReviews} = require("../../util/format");
 
 router.get('/reviews', (req, res, next) => {
-    User.findOne({_id: res.get('id')}, {_id: 1}).then((user) => {
-        if (user === null || user === undefined)
-            next(new Error('Cannot find user!'));
+    NullSector.hasUser({_id: id}, (error, bool, user) => {
+        if(error)
+            next(error);
 
-        else
-            return Review.find({user: user._id});
-    }).then((reviews) => {
-        res.status(200).json(reviews);
-    }).catch((error) => {
-        next(error);
+        else if(bool)
+            res.status(204);
+
+        else {
+            Review.find({user: id}).then((reviews) => {
+                res.status(200).json(formatReviews(reviews, res.get('id')));
+            }).catch((error) => {
+                next(error);
+            })
+        }
+    });
+});
+
+router.get('/:id/reviews', (req, res, next) => {
+    const id = req.params.id;
+
+    NullSector.hasUser({_id: id}, (error, bool, user) => {
+        if(error)
+            next(error);
+
+        else if(bool)
+            res.status(204);
+
+        else {
+            Review.find({user: id}).then((reviews) => {
+                res.status(200).json(formatReviews(reviews, res.get('id')));
+            }).catch((error) => {
+                next(error);
+            })
+        }
     });
 });
 
@@ -46,16 +72,9 @@ router.get('/games', (req, res, next) => {
             else {
                 let games = JSON.parse(body).response.games;
 
-                console.log(games);
-
-                console.log(name);
-
                 if (name && games)
                     games = games.filter(game => {
-                        console.log(typeof name);
-                        var l = game.name.toLowerCase().startsWith(name.toLowerCase());
-                        console.log(l);
-                        return l;
+                        return game.name.toLowerCase().startsWith(name.toLowerCase());
                     });
 
                 res.status(200).json(games);
