@@ -20,7 +20,7 @@ function hasComment(searchCriteria, cb) {
 }
 
 function hasUser(searchCriteria, cb) {
-    User.findOne(searchCriteria).then((user) => {
+    User.findById(searchCriteria).then((user) => {
         cb(null, user !== null, user);
     }).catch((error) => {
         cb(error, false, null);
