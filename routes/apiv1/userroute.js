@@ -34,7 +34,7 @@ router.get('/:id/reviews', (req, res, next) => {
         if(error)
             next(error);
 
-        else if(bool)
+        else if(!bool)
             res.status(204);
 
         else {

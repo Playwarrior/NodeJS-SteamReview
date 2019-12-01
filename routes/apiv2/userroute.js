@@ -47,9 +47,7 @@ router.get('/profile/:id', (req, res, next) => {
 router.get('/:id/reviews', (req, res, next) => {
     const id = req.params.id;
 
-    console.log(id + "!");
-
-    NullSector.hasUser(id, (error, bool, user) => {
+    NullSector.hasUser({_id: id}, (error, bool, user) => {
        if(error)
            next(error);
 
