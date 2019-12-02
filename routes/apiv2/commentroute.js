@@ -1,5 +1,6 @@
 const express = require('express');
 const request = require('request');
+const Comment = require('../../models/comment');
 
 const NullSector = require('../../util/nullsector');
 const {formatComments} = require("../../util/format");
