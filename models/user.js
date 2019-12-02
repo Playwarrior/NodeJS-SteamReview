@@ -20,7 +20,14 @@ const UserSchema = new Schema({
                 'Password is required (Should have 1 lowercase letter, 1 uppercase letter, 1 number and be  at least 8 characters long)'
             ]
         },
-        steam: String,
+        steam: {
+            type: String,
+            required: [
+                true,
+                'Steam Id is required!'
+            ],
+            unique: [true, 'Steam Id is already in use!']
+        },
     },
     {collection: 'users'}
 );
