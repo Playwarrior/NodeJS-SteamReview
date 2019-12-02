@@ -47,7 +47,7 @@ router.get('/profile/:id', (req, res, next) => {
 router.get('/:id/reviews', (req, res, next) => {
     const id = req.params.id;
 
-    NullSector.hasUser({_id: id}, (error, bool, user) => {
+    NullSector.hasUser(id, (error, bool, user) => {
        if(error)
            next(error);
 
@@ -61,6 +61,29 @@ router.get('/:id/reviews', (req, res, next) => {
                next(error);
            })
        }
+    });
+});
+
+router.get('/:id/games/:appid', (req, res, next) => {
+    const name = req.query.name;
+
+    User.findOne({_id: req.params.id}).then(user => {
+        request.get(`https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=895B4194E1AD13021E19E236A6D8CC7E&include_appinfo=true&include_played_free_games=true&format=json&steamid=${user.steam}`, {}, (error, response, body) => {
+            if (error)
+                next(error);
+
+            else {
+                const b = JSON.parse(body);
+
+                res.status(200);
+
+                if (b.response.games)
+                    res.json(b.response.games.filter(game => game.appid == req.params.appid)[0]);
+
+                else
+                    res.json({});
+            }
+        });
     });
 });
 

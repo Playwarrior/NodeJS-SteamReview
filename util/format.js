@@ -60,4 +60,10 @@ function formatComments(comments, user){
     return array;
 }
 
-module.exports = {formatReview, formatReviews, formatComment, formatComments};
+function formatProfile(profile, id) {
+    profile.id = id;
+
+    return profile;
+}
+
+module.exports = {formatReview, formatReviews, formatComment, formatComments, formatProfile};

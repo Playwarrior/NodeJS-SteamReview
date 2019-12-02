@@ -14,11 +14,11 @@ const ReviewSchema = new Schema({
         type: String,
         validate: {
             validator: function(v) {
-                return /^.{1,300}$/.test(v);
+                return /^.{1,25}$/.test(v);
             },
-            msg: 'Title is empty or exceeds 100 characters!'
+            msg: 'Title is empty or exceeds 25 characters!'
         },
-        required: [true, 'Title is required! (Max. 100 characters)']
+        required: [true, 'Title is required! (Max. 25 characters)']
     },
     content: {
         type: String,
